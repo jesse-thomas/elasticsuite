@@ -31,13 +31,22 @@ class VisibleInCatalog implements FilterInterface
     private $queryFactory;
 
     /**
+     * @var Magento\Catalog\Model\Product\VisibilityFactory
+     */
+    private $visibilityFactory;
+    
+    /**
      * Visibility filter constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query Factory
      */
-    public function __construct(\Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory)
+    public function __construct(
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Magento\Catalog\Model\Product\VisibilityFactory $visibilityFactory
+    )
     {
         $this->queryFactory  = $queryFactory;
+        $this->visibilityFactory = $visibilityFactory;
     }
 
     /**
@@ -45,14 +54,13 @@ class VisibleInCatalog implements FilterInterface
      */
     public function getFilterQuery()
     {
+        $visibility = $this->visibilityFactory->create();
+        
         $query = $this->queryFactory->create(
             QueryInterface::TYPE_TERMS,
             [
                 'field' => 'visibility',
-                'values' => [
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
-                ],
+                'values' =>$visibility->getVisibleInCatalogIds(),
             ]
         );
 

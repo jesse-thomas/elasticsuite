@@ -31,13 +31,22 @@ class VisibleInSearch implements FilterInterface
     private $queryFactory;
 
     /**
+     * @var Magento\Catalog\Model\Product\VisibilityFactory
+     */
+    private $visibilityFactory;
+    
+    /**
      * Search Blacklist filter constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query Factory
      */
-    public function __construct(\Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory)
+    public function __construct(
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Magento\Catalog\Model\Product\VisibilityFactory $visibilityFactory
+    )
     {
         $this->queryFactory  = $queryFactory;
+        $this->visibilityFactory = $visibilityFactory;
     }
 
     /**
@@ -49,10 +58,7 @@ class VisibleInSearch implements FilterInterface
             QueryInterface::TYPE_TERMS,
             [
                 'field' => 'visibility',
-                'values' => [
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH,
-                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
-                ],
+                'values' => $visibility->getVisibleInSearchIds(),
             ]
         );
 
